@@ -1,0 +1,577 @@
+<link rel="icon"
+  href="https://shop.towerbridge.org.uk/cdn/shop/files/PawprintMindTheGapRoundelPinBadge2.jpg?v=1728555664&width=1000"
+  type="image/icon type">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Achintya's French Translation Bee Vocabulary Trainer</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f0f8ff;
+      height: 100%;
+    }
+
+    body {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .word {
+      font-size: 3rem;
+      margin: 1rem 0;
+    }
+
+    .translation {
+      font-size: 2rem;
+      color: red;
+      margin-bottom: 1rem;
+    }
+
+    #start-btn {
+      margin-bottom: 1rem;
+    }
+
+    #time {
+      font-size: 1.5rem;
+      position: absolute;
+      top: 20px;
+      right: 30px;
+    }
+
+    #timesup {
+      background-color: yellow;
+      padding: 1rem;
+      font-size: 2rem;
+      display: none;
+      position: relative;
+      text-align: center;
+    }
+
+    #restart-btn {
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      margin-top: 10px;
+    }
+
+    .center-controls {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+      display: none;
+    }
+
+    .bottom-checkboxes {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    button {
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="time">60.0</div>
+  <div class="word" id="foreign-word">Welcome to Achintya's Translation Spelling Bee Vocabulary Trainer</div>
+  <div class="translation" id="translation">Built using HTML, CSS & JavaScript</div>
+  <button id="start-btn" onclick="startQuiz()">Start</button>
+  <div class="center-controls" id="control-buttons">
+    <button id="next-btn" onclick="showNextWord()">Next</button>
+    <button id="stop-btn" onclick="stopQuiz()">Stop</button>
+  </div>
+  <div class="bottom-checkboxes">
+    <label><input type="checkbox" id="stage2"> French Stage 2</label>
+    <label><input type="checkbox" id="stage3"> French Stage 3</label>
+  </div>
+  <div id="timesup">
+    <div>TIME'S UP!</div>
+  </div>
+  <button id="restart-btn" onclick="restartQuiz()" style="display: none;">Restart</button>
+
+  <script>
+    const vocabStage2 = [
+      { fr: "Je vais voyager en Espagne", en: "I am going to travel to Spain" },
+      { fr: "Nous allons voyager en Espagne", en: "We are going to travel to Spain" },
+      { fr: "Je vais voyager en France", en: "I am going to travel to France" },
+      { fr: "Nous allons voyager en France", en: "We are going to travel to France" },
+      { fr: "Je vais voyager en Allemagne", en: "I am going to travel to Germany" },
+      { fr: "Nous allons voyager en Allemagne", en: "We are going to travel to Germany" },
+      { fr: "Je vais voyager en Italie", en: "I am going to travel to Italy" },
+      { fr: "Nous allons voyager en Italie", en: "We are going to travel to Italy" },
+      { fr: "Je vais voyager en Autriche", en: "I am going to travel to Austria" },
+      { fr: "Nous allons voyager en Autriche", en: "We are going to travel to Austria" },
+      { fr: "Je vais voyager en Belgique", en: "I am going to travel to Belgium" },
+      { fr: "Nous allons voyager en Belgique", en: "We are going to travel to Belgium" },
+      { fr: "Je vais voyager en Suisse", en: "I am going to travel to Switzerland" },
+      { fr: "Nous allons voyager en Suisse", en: "We are going to travel to Switzerland" },
+      { fr: "Je vais voyager en autobus", en: "I am going to travel by bus" },
+      { fr: "Nous allons voyager en autobus", en: "We are going to travel by bus" },
+      { fr: "Je vais voyager en train", en: "I am going to travel by train" },
+      { fr: "Nous allons voyager en train", en: "We are going to travel by train" },
+      { fr: "Je vais voyager en voiture", en: "I am going to travel by car" },
+      { fr: "Nous allons voyager en voiture", en: "We are going to travel by car" },
+      { fr: "Je vais voyager en bateau", en: "I am going to travel by boat" },
+      { fr: "Nous allons voyager en bateau", en: "We are going to travel by boat" },
+      { fr: "Je vais voyager en métro", en: "I am going to travel by metro" },
+      { fr: "Nous allons voyager en métro", en: "We are going to travel by metro" },
+      { fr: "Je vais voyager à vélo", en: "I am going to travel by bike" },
+      { fr: "Nous allons voyager à vélo", en: "We are going to travel by bike" },
+      { fr: "Je vais manger de la pizza", en: "I am going to eat pizza" },
+      { fr: "Nous allons manger de la pizza", en: "We are going to eat pizza" },
+      { fr: "Je vais manger des frites", en: "I am going to eat chips" },
+      { fr: "Nous allons manger des frites", en: "We are going to eat chips" },
+      { fr: "Je vais manger des fruits", en: "I am going to eat fruit" },
+      { fr: "Nous allons manger des fruits", en: "We are going to eat fruit" },
+      { fr: "Je vais manger de la salade", en: "I am going to eat salad" },
+      { fr: "Nous allons manger de la salade", en: "We are going to eat salad" },
+      { fr: "Je vais manger du riz", en: "I am going to eat rice" },
+      { fr: "Nous allons manger du riz", en: "We are going to eat rice" },
+      { fr: "Je vais boire de l’eau", en: "I am going to drink water" },
+      { fr: "Nous allons boire de l’eau", en: "We are going to drink water" },
+      { fr: "Je vais boire de la limonade", en: "I am going to drink lemonade" },
+      { fr: "Nous allons boire de la limonade", en: "We are going to drink lemonade" },
+      { fr: "Je vais boire du thé", en: "I am going to drink tea" },
+      { fr: "Nous allons boire du thé", en: "We are going to drink tea" },
+      { fr: "Je vais boire du café", en: "I am going to drink coffee" },
+      { fr: "Nous allons boire du café", en: "We are going to drink coffee" },
+      { fr: "Je vais apprendre l’allemand", en: "I am going to learn German" },
+      { fr: "Nous allons apprendre l’allemand", en: "We are going to learn German" },
+      { fr: "Je vais apprendre le français", en: "I am going to learn French" },
+      { fr: "Nous allons apprendre le français", en: "We are going to learn French" },
+      { fr: "Je vais apprendre l’espagnol", en: "I am going to learn Spanish" },
+      { fr: "Nous allons apprendre l’espagnol", en: "We are going to learn Spanish" },
+      { fr: "Je vais apprendre l’anglais", en: "I am going to learn English" },
+      { fr: "Nous allons apprendre l’anglais", en: "We are going to learn English" },
+      { fr: "Je vais apprendre les maths", en: "I am going to learn maths" },
+      { fr: "Nous allons apprendre les maths", en: "We are going to learn maths" },
+      { fr: "Je vais apprendre les sciences", en: "I am going to learn science" },
+      { fr: "Nous allons apprendre les sciences", en: "We are going to learn science" },
+      { fr: "Je vais apprendre le théâtre", en: "I am going to learn drama" },
+      { fr: "Nous allons apprendre le théâtre", en: "We are going to learn drama" },
+      { fr: "Je vais apprendre le dessin", en: "I am going to learn art" },
+      { fr: "Nous allons apprendre le dessin", en: "We are going to learn art" },
+      { fr: "Je vais apprendre la géographie", en: "I am going to learn geography" },
+      { fr: "Nous allons apprendre la géographie", en: "We are going to learn geography" },
+      { fr: "Je vais apprendre l’histoire", en: "I am going to learn history" },
+      { fr: "Nous allons apprendre l’histoire", en: "We are going to learn history" },
+      { fr: "Je vais jouer au foot", en: "I am going to play football" },
+      { fr: "Nous allons jouer au foot", en: "We are going to play football" },
+      { fr: "Je vais jouer au basket", en: "I am going to play basketball" },
+      { fr: "Nous allons jouer au basket", en: "We are going to play basketball" },
+      { fr: "Je vais jouer au tennis", en: "I am going to play tennis" },
+      { fr: "Nous allons jouer au tennis", en: "We are going to play tennis" },
+      { fr: "Je vais jouer au golf", en: "I am going to play golf" },
+      { fr: "Nous allons jouer au golf", en: "We are going to play golf" },
+      { fr: "Je vais jouer au hockey", en: "I am going to play hockey" },
+      { fr: "Nous allons jouer au hockey", en: "We are going to play hockey" },
+      { fr: "Je vais jouer au rugby", en: "I am going to play rugby" },
+      { fr: "Nous allons jouer au rugby", en: "We are going to play rugby" },
+      { fr: "Je vais jouer aux cartes", en: "I am going to play cards" },
+      { fr: "Nous allons jouer aux cartes", en: "We are going to play cards" },
+      { fr: "Je vais jouer au ping-pong", en: "I am going to play table tennis" },
+      { fr: "Nous allons jouer au ping-pong", en: "We are going to play table tennis" },
+      { fr: "Je vais jouer au badminton", en: "I am going to play badminton" },
+      { fr: "Nous allons jouer au badminton", en: "We are going to play badminton" },
+      { fr: "Je vais jouer au volley", en: "I am going to play volleyball" },
+      { fr: "Nous allons jouer au volley", en: "We are going to play volleyball" },
+      { fr: "Je vais aller au cinéma", en: "I am going to go to the cinema" },
+      { fr: "Nous allons aller au cinéma", en: "We are going to go to the cinema" },
+      { fr: "Je vais aller au théâtre", en: "I am going to go to the theatre" },
+      { fr: "Nous allons aller au théâtre", en: "We are going to go to the theatre" },
+      { fr: "Je vais aller au restaurant", en: "I am going to go to the restaurant" },
+      { fr: "Nous allons aller au restaurant", en: "We are going to go to the restaurant" },
+      { fr: "Je vais aller au collège", en: "I am going to go to school" },
+      { fr: "Nous allons aller au collège", en: "We are going to go to school" },
+      { fr: "Je vais aller à la maison", en: "I am going to go home" },
+      { fr: "Nous allons aller à la maison", en: "We are going to go home" },
+      { fr: "Je vais aller au café", en: "I am going to go to the café" },
+      { fr: "Nous allons aller au café", en: "We are going to go to the café" },
+      { fr: "Je vais aller au travail", en: "I am going to go to work" },
+      { fr: "Nous allons aller au travail", en: "We are going to go to work" },
+      { fr: "Je vais aller à la plage", en: "I am going to go to the beach" },
+      { fr: "Nous allons aller à la plage", en: "We are going to go to the beach" },
+      { fr: "Je vais aller à la piscine", en: "I am going to go to the pool" },
+      { fr: "Nous allons aller à la piscine", en: "We are going to go to the pool" },
+      { fr: "Je vais habiter dans un village", en: "I am going to live in a village" },
+      { fr: "Nous allons habiter dans un village", en: "We are going to live in a village" },
+      { fr: "Je vais habiter dans une ville", en: "I am going to live in a town/city" },
+      { fr: "Nous allons habiter dans une ville", en: "We are going to live in a town/city" },
+      { fr: "Je vais habiter à la campagne", en: "I am going to live in the countryside" },
+      { fr: "Nous allons habiter à la campagne", en: "We are going to live in the countryside" },
+      { fr: "Je vais habiter au bord de la mer", en: "I am going to live by the sea" },
+      { fr: "Nous allons habiter au bord de la mer", en: "We are going to live by the sea" },
+      { fr: "Je vais habiter à la montagne", en: "I am going to live in the mountains" },
+      { fr: "Nous allons habiter à la montagne", en: "We are going to live in the mountains" },
+      { fr: "Je vais acheter un tee-shirt", en: "I am going to buy a T-shirt" },
+      { fr: "Nous allons acheter un tee-shirt", en: "We are going to buy a T-shirt" },
+      { fr: "Je vais acheter une chemise", en: "I am going to buy a shirt" },
+      { fr: "Nous allons acheter une chemise", en: "We are going to buy a shirt" },
+      { fr: "Je vais acheter une robe", en: "I am going to buy a dress" },
+      { fr: "Nous allons acheter une robe", en: "We are going to buy a dress" },
+      { fr: "Je vais acheter une jupe", en: "I am going to buy a skirt" },
+      { fr: "Nous allons acheter une jupe", en: "We are going to buy a skirt" },
+      { fr: "Je vais acheter un pull", en: "I am going to buy a jumper" },
+      { fr: "Nous allons acheter un pull", en: "We are going to buy a jumper" },
+      { fr: "Je vais acheter un pantalon", en: "I am going to buy trousers" },
+      { fr: "Nous allons acheter un pantalon", en: "We are going to buy trousers" },
+      { fr: "Je vais acheter des chaussettes", en: "I am going to buy socks" },
+      { fr: "Nous allons acheter des chaussettes", en: "We are going to buy socks" },
+      { fr: "Je vais acheter des chaussures", en: "I am going to buy shoes" },
+      { fr: "Nous allons acheter des chaussures", en: "We are going to buy shoes" },
+      { fr: "Je vais acheter des baskets", en: "I am going to buy trainers" },
+      { fr: "Nous allons acheter des baskets", en: "We are going to buy trainers" },
+      { fr: "Je vais acheter de la nourriture", en: "I am going to buy food" },
+      { fr: "Nous allons acheter de la nourriture", en: "We are going to buy food" },
+      { fr: "Je vais acheter un cadeau", en: "I am going to buy a present" },
+      { fr: "Nous allons acheter un cadeau", en: "We are going to buy a present" },
+      { fr: "Je vais acheter un billet", en: "I am going to buy a ticket" },
+      { fr: "Nous allons acheter un billet", en: "We are going to buy a ticket" },
+      { fr: "Je vais acheter une boisson", en: "I am going to buy a drink" },
+      { fr: "Nous allons acheter une boisson", en: "We are going to buy a drink" },
+      { fr: "Je vais acheter une glace", en: "I am going to buy an ice cream" },
+      { fr: "Nous allons acheter une glace", en: "We are going to buy an ice cream" },
+      { fr: "Je vais acheter du pain", en: "I am going to buy bread" },
+      { fr: "Nous allons acheter du pain", en: "We are going to buy bread" },
+      { fr: "Je vais acheter un souvenir", en: "I am going to buy a souvenir" },
+      { fr: "Nous allons acheter un souvenir", en: "We are going to buy a souvenir" },
+      { fr: "Je vais acheter des vêtements", en: "I am going to buy clothes" },
+      { fr: "Nous allons acheter des vêtements", en: "We are going to buy clothes" },
+      { fr: "Je vais acheter un manteau", en: "I am going to buy a coat" },
+      { fr: "Nous allons acheter un manteau", en: "We are going to buy a coat" },
+      { fr: "Je vais faire les devoirs", en: "I am going to do homework" },
+      { fr: "Nous allons faire les devoirs", en: "We are going to do homework" },
+      { fr: "Je vais faire le ménage", en: "I am going to do the cleaning" },
+      { fr: "Nous allons faire le ménage", en: "We are going to do the cleaning" },
+      { fr: "Je vais faire des plans", en: "I am going to make plans" },
+      { fr: "Nous allons faire des plans", en: "We are going to make plans" },
+      { fr: "Je vais faire un gâteau", en: "I am going to make a cake" },
+      { fr: "Nous allons faire un gâteau", en: "We are going to make a cake" },
+      { fr: "Je vais faire du sport", en: "I am going to do sport" },
+      { fr: "Nous allons faire du sport", en: "We are going to do sport" },
+      { fr: "Je vais faire un concours", en: "I am going to do a competition" },
+      { fr: "Nous allons faire un concours", en: "We are going to do a competition" },
+      { fr: "Je vais faire une erreur", en: "I am going to make a mistake" },
+      { fr: "Nous allons faire une erreur", en: "We are going to make a mistake" },
+      { fr: "Je vais faire un examen", en: "I am going to take an exam" },
+      { fr: "Nous allons faire un examen", en: "We are going to take an exam" },
+      { fr: "Je vais faire une liste", en: "I am going to make a list" },
+      { fr: "Nous allons faire une liste", en: "We are going to make a list" },
+      { fr: "Je vais faire dehors", en: "I am going to do it outside" },
+      { fr: "Nous allons faire dehors", en: "We are going to do it outside" },
+      { fr: "Je vais faire en ligne", en: "I am going to do it online" },
+      { fr: "Nous allons faire en ligne", en: "We are going to do it online" },
+      { fr: "Je vais faire chez moi", en: "I am going to do it at home" },
+      { fr: "Nous allons faire chez moi", en: "We are going to do it at home" },
+      { fr: "Je vais travailler dans un bureau", en: "I am going to work in an office" },
+      { fr: "Nous allons travailler dans un bureau", en: "We are going to work in an office" },
+      { fr: "Je vais travailler dans une école", en: "I am going to work in a school" },
+      { fr: "Nous allons travailler dans une école", en: "We are going to work in a school" },
+      { fr: "Je vais travailler dans un magasin", en: "I am going to work in a shop" },
+      { fr: "Nous allons travailler dans un magasin", en: "We are going to work in a shop" },
+      { fr: "Je vais travailler dans une entreprise", en: "I am going to work in a company" },
+      { fr: "Nous allons travailler dans une entreprise", en: "We are going to work in a company" },
+      { fr: "Je vais travailler dans une banque", en: "I am going to work in a bank" },
+      { fr: "Nous allons travailler dans une banque", en: "We are going to work in a bank" },
+    ];
+
+    const vocabStage3 = [
+      { fr: "J’ai voyagé en Espagne", en: "I travelled to Spain" },
+      { fr: "Nous avons voyagé en Espagne", en: "We travelled to Spain" },
+      { fr: "J’ai voyagé en France", en: "I travelled to France" },
+      { fr: "Nous avons voyagé en France", en: "We travelled to France" },
+      { fr: "J’ai voyagé en Allemagne", en: "I travelled to Germany" },
+      { fr: "Nous avons voyagé en Allemagne", en: "We travelled to Germany" },
+      { fr: "J’ai voyagé en Italie", en: "I travelled to Italy" },
+      { fr: "Nous avons voyagé en Italie", en: "We travelled to Italy" },
+      { fr: "J’ai voyagé en Autriche", en: "I travelled to Austria" },
+      { fr: "Nous avons voyagé en Autriche", en: "We travelled to Austria" },
+      { fr: "J’ai voyagé en Belgique", en: "I travelled to Belgium" },
+      { fr: "Nous avons voyagé en Belgique", en: "We travelled to Belgium" },
+      { fr: "J’ai voyagé en Suisse", en: "I travelled to Switzerland" },
+      { fr: "Nous avons voyagé en Suisse", en: "We travelled to Switzerland" },
+      { fr: "J’ai voyagé en autobus", en: "I travelled by bus" },
+      { fr: "Nous avons voyagé en autobus", en: "We travelled by bus" },
+      { fr: "J’ai voyagé en train", en: "I travelled by train" },
+      { fr: "Nous avons voyagé en train", en: "We travelled by train" },
+      { fr: "J’ai voyagé en voiture", en: "I travelled by car" },
+      { fr: "Nous avons voyagé en voiture", en: "We travelled by car" },
+      { fr: "J’ai voyagé en bateau", en: "I travelled by boat" },
+      { fr: "Nous avons voyagé en bateau", en: "We travelled by boat" },
+      { fr: "J’ai voyagé en métro", en: "I travelled by metro" },
+      { fr: "Nous avons voyagé en métro", en: "We travelled by metro" },
+      { fr: "J’ai voyagé à vélo", en: "I travelled by bike" },
+      { fr: "Nous avons voyagé à vélo", en: "We travelled by bike" },
+      { fr: "J’ai mangé de la pizza", en: "I ate pizza" },
+      { fr: "Nous avons mangé de la pizza", en: "We ate pizza" },
+      { fr: "J’ai mangé des frites", en: "I ate chips" },
+      { fr: "Nous avons mangé des frites", en: "We ate chips" },
+      { fr: "J’ai mangé des fruits", en: "I ate fruit" },
+      { fr: "Nous avons mangé des fruits", en: "We ate fruit" },
+      { fr: "J’ai mangé de la salade", en: "I ate salad" },
+      { fr: "Nous avons mangé de la salade", en: "We ate salad" },
+      { fr: "J’ai mangé du riz", en: "I ate rice" },
+      { fr: "Nous avons mangé du riz", en: "We ate rice" },
+      { fr: "J’ai bu de l’eau", en: "I drank water" },
+      { fr: "Nous avons bu de l’eau", en: "We drank water" },
+      { fr: "J’ai bu de la limonade", en: "I drank lemonade" },
+      { fr: "Nous avons bu de la limonade", en: "We drank lemonade" },
+      { fr: "J’ai bu du thé", en: "I drank tea" },
+      { fr: "Nous avons bu du thé", en: "We drank tea" },
+      { fr: "J’ai bu du café", en: "I drank coffee" },
+      { fr: "Nous avons bu du café", en: "We drank coffee" },
+      { fr: "J’ai appris l’allemand", en: "I learned German" },
+      { fr: "Nous avons appris l’allemand", en: "We learned German" },
+      { fr: "J’ai appris le français", en: "I learned French" },
+      { fr: "Nous avons appris le français", en: "We learned French" },
+      { fr: "J’ai appris l’espagnol", en: "I learned Spanish" },
+      { fr: "Nous avons appris l’espagnol", en: "We learned Spanish" },
+      { fr: "J’ai appris l’anglais", en: "I learned English" },
+      { fr: "Nous avons appris l’anglais", en: "We learned English" },
+      { fr: "J’ai appris les maths", en: "I learned maths" },
+      { fr: "Nous avons appris les maths", en: "We learned maths" },
+      { fr: "J’ai appris les sciences", en: "I learned science" },
+      { fr: "Nous avons appris les sciences", en: "We learned science" },
+      { fr: "J’ai appris le théâtre", en: "I learned drama" },
+      { fr: "Nous avons appris le théâtre", en: "We learned drama" },
+      { fr: "J’ai appris le dessin", en: "I learned art" },
+      { fr: "Nous avons appris le dessin", en: "We learned art" },
+      { fr: "J’ai appris la géographie", en: "I learned geography" },
+      { fr: "Nous avons appris la géographie", en: "We learned geography" },
+      { fr: "J’ai appris l’histoire", en: "I learned history" },
+      { fr: "Nous avons appris l’histoire", en: "We learned history" },
+      { fr: "J’ai joué au foot", en: "I played football" },
+      { fr: "Nous avons joué au foot", en: "We played football" },
+      { fr: "J’ai joué au basket", en: "I played basketball" },
+      { fr: "Nous avons joué au basket", en: "We played basketball" },
+      { fr: "J’ai joué au tennis", en: "I played tennis" },
+      { fr: "Nous avons joué au tennis", en: "We played tennis" },
+      { fr: "J’ai joué au golf", en: "I played golf" },
+      { fr: "Nous avons joué au golf", en: "We played golf" },
+      { fr: "J’ai joué au hockey", en: "I played hockey" },
+      { fr: "Nous avons joué au hockey", en: "We played hockey" },
+      { fr: "J’ai joué au rugby", en: "I played rugby" },
+      { fr: "Nous avons joué au rugby", en: "We played rugby" },
+      { fr: "J’ai joué aux cartes", en: "I played cards" },
+      { fr: "Nous avons joué aux cartes", en: "We played cards" },
+      { fr: "J’ai joué au ping-pong", en: "I played table tennis" },
+      { fr: "Nous avons joué au ping-pong", en: "We played table tennis" },
+      { fr: "J’ai joué au badminton", en: "I played badminton" },
+      { fr: "Nous avons joué au badminton", en: "We played badminton" },
+      { fr: "J’ai joué au volley", en: "I played volleyball" },
+      { fr: "Nous avons joué au volley", en: "We played volleyball" },
+      { fr: "Je suis allé(e) au cinéma", en: "I went to the cinema" },
+      { fr: "Nous sommes allé(e)s au cinéma", en: "We went to the cinema" },
+      { fr: "Je suis allé(e) au théâtre", en: "I went to the theatre" },
+      { fr: "Nous sommes allé(e)s au théâtre", en: "We went to the theatre" },
+      { fr: "Je suis allé(e) au restaurant", en: "I went to the restaurant" },
+      { fr: "Nous sommes allé(e)s au restaurant", en: "We went to the restaurant" },
+      { fr: "Je suis allé(e) au collège", en: "I went to school" },
+      { fr: "Nous sommes allé(e)s au collège", en: "We went to school" },
+      { fr: "Je suis allé(e) à la maison", en: "I went home" },
+      { fr: "Nous sommes allé(e)s à la maison", en: "We went home" },
+      { fr: "Je suis allé(e) au café", en: "I went to the café" },
+      { fr: "Nous sommes allé(e)s au café", en: "We went to the café" },
+      { fr: "Je suis allé(e) au travail", en: "I went to work" },
+      { fr: "Nous sommes allé(e)s au travail", en: "We went to work" },
+      { fr: "Je suis allé(e) à la plage", en: "I went to the beach" },
+      { fr: "Nous sommes allé(e)s à la plage", en: "We went to the beach" },
+      { fr: "Je suis allé(e) à la piscine", en: "I went to the swimming pool" },
+      { fr: "Nous sommes allé(e)s à la piscine", en: "We went to the swimming pool" },
+      { fr: "J’ai habité dans un village", en: "I lived in a village" },
+      { fr: "Nous avons habité dans un village", en: "We lived in a village" },
+      { fr: "J’ai habité dans une ville", en: "I lived in a town/city" },
+      { fr: "Nous avons habité dans une ville", en: "We lived in a town/city" },
+      { fr: "J’ai habité à la campagne", en: "I lived in the countryside" },
+      { fr: "Nous avons habité à la campagne", en: "We lived in the countryside" },
+      { fr: "J’ai habité au bord de la mer", en: "I lived by the sea" },
+      { fr: "Nous avons habité au bord de la mer", en: "We lived by the sea" },
+      { fr: "J’ai habité à la montagne", en: "I lived in the mountains" },
+      { fr: "Nous avons habité à la montagne", en: "We lived in the mountains" },
+      { fr: "J’ai acheté un tee-shirt", en: "I bought a T-shirt" },
+      { fr: "Nous avons acheté un tee-shirt", en: "We bought a T-shirt" },
+      { fr: "J’ai acheté une chemise", en: "I bought a shirt" },
+      { fr: "Nous avons acheté une chemise", en: "We bought a shirt" },
+      { fr: "J’ai acheté une robe", en: "I bought a dress" },
+      { fr: "Nous avons acheté une robe", en: "We bought a dress" },
+      { fr: "J’ai acheté une jupe", en: "I bought a skirt" },
+      { fr: "Nous avons acheté une jupe", en: "We bought a skirt" },
+      { fr: "J’ai acheté un pull", en: "I bought a jumper" },
+      { fr: "Nous avons acheté un pull", en: "We bought a jumper" },
+      { fr: "J’ai acheté un pantalon", en: "I bought trousers" },
+      { fr: "Nous avons acheté un pantalon", en: "We bought trousers" },
+      { fr: "J’ai acheté des chaussettes", en: "I bought socks" },
+      { fr: "Nous avons acheté des chaussettes", en: "We bought socks" },
+      { fr: "J’ai acheté des chaussures", en: "I bought shoes" },
+      { fr: "Nous avons acheté des chaussures", en: "We bought shoes" },
+      { fr: "J’ai acheté des baskets", en: "I bought trainers" },
+      { fr: "Nous avons acheté des baskets", en: "We bought trainers" },
+      { fr: "J’ai acheté de la nourriture", en: "I bought food" },
+      { fr: "Nous avons acheté de la nourriture", en: "We bought food" },
+      { fr: "J’ai acheté un cadeau", en: "I bought a present" },
+      { fr: "Nous avons acheté un cadeau", en: "We bought a present" },
+      { fr: "J’ai acheté un billet", en: "I bought a ticket" },
+      { fr: "Nous avons acheté un billet", en: "We bought a ticket" },
+      { fr: "J’ai acheté une boisson", en: "I bought a drink" },
+      { fr: "Nous avons acheté une boisson", en: "We bought a drink" },
+      { fr: "J’ai acheté une glace", en: "I bought an ice cream" },
+      { fr: "Nous avons acheté une glace", en: "We bought an ice cream" },
+      { fr: "J’ai acheté du pain", en: "I bought bread" },
+      { fr: "Nous avons acheté du pain", en: "We bought bread" },
+      { fr: "J’ai acheté un souvenir", en: "I bought a souvenir" },
+      { fr: "Nous avons acheté un souvenir", en: "We bought a souvenir" },
+      { fr: "J’ai acheté des vêtements", en: "I bought clothes" },
+      { fr: "Nous avons acheté des vêtements", en: "We bought clothes" },
+      { fr: "J’ai acheté un manteau", en: "I bought a coat" },
+      { fr: "Nous avons acheté un manteau", en: "We bought a coat" },
+      { fr: "J’ai fait les devoirs", en: "I did homework" },
+      { fr: "Nous avons fait les devoirs", en: "We did homework" },
+      { fr: "J’ai fait le ménage", en: "I did the cleaning" },
+      { fr: "Nous avons fait le ménage", en: "We did the cleaning" },
+      { fr: "J’ai fait des plans", en: "I made plans" },
+      { fr: "Nous avons fait des plans", en: "We made plans" },
+      { fr: "J’ai fait un gâteau", en: "I made a cake" },
+      { fr: "Nous avons fait un gâteau", en: "We made a cake" },
+      { fr: "J’ai fait du sport", en: "I did sport" },
+      { fr: "Nous avons fait du sport", en: "We did sport" },
+      { fr: "J’ai fait un concours", en: "I did a competition" },
+      { fr: "Nous avons fait un concours", en: "We did a competition" },
+      { fr: "J’ai fait une erreur", en: "I made a mistake" },
+      { fr: "Nous avons fait une erreur", en: "We made a mistake" },
+      { fr: "J’ai fait un examen", en: "I took an exam" },
+      { fr: "Nous avons fait un examen", en: "We took an exam" },
+      { fr: "J’ai fait une liste", en: "I made a list" },
+      { fr: "Nous avons fait une liste", en: "We made a list" },
+      { fr: "J’ai fait dehors", en: "I did it outside" },
+      { fr: "Nous avons fait dehors", en: "We did it outside" },
+      { fr: "J’ai fait en ligne", en: "I did it online" },
+      { fr: "Nous avons fait en ligne", en: "We did it online" },
+      { fr: "J’ai fait chez moi", en: "I did it at home" },
+      { fr: "Nous avons fait chez moi", en: "We did it at home" },
+      { fr: "J’ai travaillé dans un bureau", en: "I worked in an office" },
+      { fr: "Nous avons travaillé dans un bureau", en: "We worked in an office" },
+      { fr: "J’ai travaillé dans une école", en: "I worked in a school" },
+      { fr: "Nous avons travaillé dans une école", en: "We worked in a school" },
+      { fr: "J’ai travaillé dans un magasin", en: "I worked in a shop" },
+      { fr: "Nous avons travaillé dans un magasin", en: "We worked in a shop" },
+      { fr: "J’ai travaillé dans une entreprise", en: "I worked in a company" },
+      { fr: "Nous avons travaillé dans une entreprise", en: "We worked in a company" },
+      { fr: "J’ai travaillé dans une banque", en: "I worked in a bank" },
+      { fr: "Nous avons travaillé dans une banque", en: "We worked in a bank" },
+    ];
+
+    let activeVocab = [];
+    let timer;
+    let countdown = 60.0;
+    let startTime;
+    let currentWord = { fr: '---', en: '---' };
+
+    function startQuiz() {
+      updateActiveVocab();
+      if (activeVocab.length === 0) {
+        window.alert("ERROR: Please select at least one stage.");
+        return;
+      }
+      document.getElementById('timesup').style.display = 'none';
+      document.getElementById('start-btn').style.display = 'none';
+      document.getElementById('control-buttons').style.display = 'flex';
+      document.getElementById('restart-btn').style.display = 'none';
+      countdown = 60.0;
+      document.getElementById('time').textContent = countdown.toFixed(1);
+      showNextWord();
+      clearInterval(timer);
+      startTime = Date.now();
+      timer = setInterval(() => {
+        const elapsed = (Date.now() - startTime) / 1000;
+        const remaining = Math.max(60 - elapsed, 0);
+        document.getElementById('time').textContent = remaining.toFixed(1);
+        if (remaining <= 0) {
+          clearInterval(timer);
+          document.getElementById('timesup').style.display = 'block';
+          document.getElementById('restart-btn').style.display = 'inline-block';
+          document.getElementById('control-buttons').style.display = 'none';
+          playLowPitchDing();
+        }
+      }, 100);
+      playHighPitchDing();
+    }
+
+    function stopQuiz() {
+      clearInterval(timer);
+      const elapsed = (Date.now() - startTime) / 1000;
+      const remaining = Math.max(60 - elapsed, 0);
+      document.getElementById('time').textContent = remaining.toFixed(1);
+      document.getElementById('foreign-word').textContent = currentWord.fr;
+      document.getElementById('translation').textContent = currentWord.en;
+      document.getElementById('control-buttons').style.display = 'none';
+      document.getElementById('timesup').style.display = 'none';
+      document.getElementById('restart-btn').style.display = 'inline-block';
+      playLowPitchDing();
+    }
+
+    function restartQuiz() {
+      document.getElementById('timesup').style.display = 'none';
+      document.getElementById('start-btn').style.display = 'inline-block';
+      document.getElementById('control-buttons').style.display = 'none';
+      document.getElementById('restart-btn').style.display = 'none';
+      countdown = 60.0;
+      document.getElementById('time').textContent = countdown.toFixed(1);
+      document.getElementById('foreign-word').textContent = 'Welcome to Achintya\'s French Spelling Bee Vocabulary Trainer';
+      document.getElementById('translation').textContent = 'Built using HTML, CSS & JavaScript';
+    }
+
+    function updateActiveVocab() {
+      activeVocab = [];
+      if (document.getElementById('stage2').checked) {
+        activeVocab = activeVocab.concat(vocabStage2);
+      }
+      if (document.getElementById('stage3').checked) {
+        activeVocab = activeVocab.concat(vocabStage3);
+      }
+    }
+
+    function showNextWord() {
+      updateActiveVocab();
+      if (activeVocab.length === 0) {
+        window.alert("ERROR: Please select at least one stage.");
+        return;
+      }
+      const randomIndex = Math.floor(Math.random() * activeVocab.length);
+      currentWord = activeVocab[randomIndex];
+      document.getElementById('foreign-word').textContent = currentWord.fr;
+      document.getElementById('translation').textContent = currentWord.en;
+    }
+
+    function playHighPitchDing() {
+      const audio = new Audio('https://raw.githubusercontent.com/achintyabh/spellingbee/main/start.wav');
+      audio.play();
+    }
+
+    function playLowPitchDing() {
+      const audio = new Audio('https://raw.githubusercontent.com/achintyabh/spellingbee/main/ending.wav');
+      audio.play();
+    }
+  </script>
+</body>
+
+</html>
